@@ -9,7 +9,7 @@ const ALayout = () => {
         <Sidebar />
         <div className='flex flex-col flex-auto'>
           {/* <Header /> */}
-          <div className='ml-0 mt-2 rounded-xl flex-auto p-2 min-h-0 overflow-auto'>
+          <div className='ml-0 mt-0 p-6 bg-gray-50 rounded-xl flex-auto min-h-0 overflow-auto'>
             <Outlet />
           </div>
         </div>
