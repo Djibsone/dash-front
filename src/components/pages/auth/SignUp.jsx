@@ -5,24 +5,51 @@ import { service } from '../../../services/service';
 import { toast } from 'react-toastify';
 
 const SignUp = () => {
-    const [showPassword,  setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '', password: '' })
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
-    const handleChange = (e) => {//niveau 18 
+    const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
-        })
-    }
-    
+        });
+    };
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     await service.register(formData)
+    //         .then(res => {
+    //             toast.success(res.data.message);
+    //         })
+    //         .catch(error => {
+    //             const errors = error.response.data.errors;
+    //             if (errors.name) {
+    //                 toast.error(errors.name[0]);
+    //             }
+    //             if (errors.email) {
+    //                 toast.error(errors.email[0]);
+    //             }
+    //             if (errors.password) {
+    //                 toast.error(errors.password[0]);
+    //             }
+    //         });
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await service.register(formData)
-        .then(res => {
+        try {
+            const res = await service.register(formData)
             toast.success(res.data.message);
-        })
-        .catch(error => toast.error(error.response.data.message))
-    }
+        } catch (error) {
+            if (error?.response?.data) {
+                setErrors(error.response.data);
+            } else {
+                toast.error('Registration failed.');
+            }
+            
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
@@ -80,29 +107,40 @@ const SignUp = () => {
         
                             <div className="mx-auto max-w-xs">
                                 <form onSubmit={handleSubmit}>
-                                    <input
-                                        className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="text" name='name' placeholder="Name" onChange={handleChange} />
-                                    <input
-                                        className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                                        type="email" name='email' placeholder="Email" onChange={handleChange} />
-                                    <div className='flex justify-center'>
-                                        <div className="relative w-full py-4">
+                                    <div className="mb-3">
+                                        <input
+                                            className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="text" name='name' placeholder="Name" onChange={handleChange}
+                                        />
+                                        {errors.name && <span className="text-red-500 text-sm">{errors.name[0]}</span>}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <input
+                                            className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                            type="email" name='email' placeholder="Email" onChange={handleChange} 
+                                        />
+                                        {errors.email && <span className="text-red-500 text-sm">{errors.email[0]}</span>}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <div className="relative w-full">
                                             <input
-                                                className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white pl-12"
-                                                type={showPassword ? 'text' : 'password'} name='password' 
-                                                placeholder="Password" onChange={handleChange} 
+                                                className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                                type={showPassword ? 'text' : 'password'}
+                                                name='password' placeholder="Password" onChange={handleChange}
                                             />
                                             <span
-                                                className="absolute inset-y-0 left-0 flex items-center pl-2 cursor-pointer"
+                                                className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? <EyeOff /> : <Eye />}
                                             </span>
                                         </div>
+                                        {errors.password && <span className="text-red-500 text-sm">{errors.password[0]}</span>}
                                     </div>
+
                                     <button
-                                        // className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                         className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all flex items-center justify-center">
                                         <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
                                             strokeLinecap="round" strokeLinejoin="round">
@@ -116,10 +154,10 @@ const SignUp = () => {
                                     </button>
                                 </form>
                                 <p className="mt-6 text-xs text-gray-600 text-center">
-                                  Already have an account? &nbsp;
-                                  <Link to='/auth' className="border-b border-gray-500 border-dotted text-violet-500">
-                                    Sign in
-                                  </Link>
+                                    Already have an account? &nbsp;
+                                    <Link to='/auth' className="border-b border-gray-500 border-dotted text-violet-500">
+                                        Sign in
+                                    </Link>
                                 </p>
                             </div>
                         </div>
@@ -127,12 +165,12 @@ const SignUp = () => {
                 </div>
                 <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
                     <div className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-                        style={{backgroundImage: 'url("https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg")'}}>
+                        style={{ backgroundImage: 'url("https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg")' }}>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default SignUp;
