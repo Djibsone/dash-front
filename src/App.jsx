@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Error from './utils/Error';
 import PRouter from './components/pages/public/PRouter';
 import ARouter from './components/pages/admin/ARouter';
 import AthRouter from './components/pages/auth/AthRouter';

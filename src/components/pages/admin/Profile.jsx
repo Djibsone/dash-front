@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Header from '../../shared/Header';
 
 const Profile = () => {
   return (
-    <div>
-      Profile
-    </div>
+    <>
+    <Header title='Profile' />
+    <div className="py-6"></div>
+    </>
   )
 }
 

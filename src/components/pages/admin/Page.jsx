@@ -1,130 +1,96 @@
-import { useEffect, useRef, useState } from 'react';
-import { userService } from '../../../services/user';
-import { Modal } from './Modal';
+import React, { useEffect, useRef, useState } from 'react';
 import { Edit, Trash } from 'lucide-react';
-import Loader from '../../../utils/Loader';
+import { userService } from '../../../services/user';
+import Modal from './Modal';
+import Header from '../../shared/Header';
 
 const Page = () => {
-  const [users, setUsers] = useState([]);
-  const flag = useRef(false);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const flag = useRef(false);
 
-  const openModal = (user) => {
-    setCurrentUser(user);
-    setOpen(true);
-  };
+    useEffect(() => {
+        if (flag.current === false) {
+            userService.getAllUsers()
+                .then(res => {
+                    setUsers(res.data.users);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            return () => flag.current = true;
+        }
+    }, []);
 
-  const closeModal = () => {
-    setOpen(false);
-    setCurrentUser(null);
-  };
-
-  useEffect(() => {
-    if (flag.current === false) {
-      setLoading(true);
-      userService.getAllUsers()
-        .then(res => {
-          setUsers(res.data.users);
-          setLoading(false);
-        })
-        .catch(error => {
-          console.log(error);
-          setLoading(false);
-        });
-      return () => flag.current = true;
+    const toggleModal = () => {
+        setIsOpen(!isOpen);
     }
-  }, []);
 
-  return (
-    <>
-      <h5 className="text-lg font-semibold mb-4">Les Utilisateurs</h5>
-      {loading ? (
-        <Loader />
-      ) : (
-        <table className="min-w-full bg-white border border-gray-200 table-auto">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-2 px-4 border-b border-gray-200 text-left">#</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-left">Name</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-left">Email</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-left">Date de création</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b border-gray-200">{user.id}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{user.name}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{user.email}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{user.created_at}</td>
-                <td className="py-2 px-4 border-b border-gray-200">
-                  <button className="mr-2" onClick={() => openModal(user)}>
-                    <Edit className="w-5 h-5 text-blue-500" />
-                  </button>
-                  <button>
-                    <Trash className="w-5 h-5 text-red-500" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      <div className="relative min-h-screen">
-        {open && (
-          <Modal>
-            <div className="flex flex-col gap-2 bg-white px-8 pb-6 rounded-lg w-[800px]">
-              <h1 className="text-lg text-black mt-2">Edit User</h1>
-              <hr />
-              {currentUser && (
-                <form>
-                  <div className="mb-3">
-                    <label className="block text-sm font-semibold">Name</label>
-                    <input
-                      type="text"
-                      defaultValue={currentUser.name}
-                      className="w-full mt-1 p-2 border rounded-md text-[#333] focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="block text-sm font-semibold">Email</label>
-                    <input
-                      type="email"
-                      defaultValue={currentUser.email}
-                      className="w-full mt-1 p-2 border rounded-md text-[#333] focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      required
-                    />
-                  </div>
-                  <hr />
-                  <div className="flex flex-row gap-2 justify-end">
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="py-3 px-6 bg-gray-500 hover:bg-gray-600 text-white font-bold text-sm rounded-md"
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setOpen(false)}
-                      className="py-3 px-8 bg-blue-500 hover:bg-blue-600 text-white font-bold text-sm rounded-md"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </form>
-              )}
+    return (
+        <>
+            <Header title='Page' />
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-6">
+                <div className="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
+                    <p className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600">
+                        Liste des utilisateurs
+                    </p>
+                    <label className="sr-only">Search</label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
+                        </div>
+                        <input type="text" id="table-search" className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items" />
+                    </div>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" className="px-6 py-3">
+                                    Nom d'utilisateur
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Adresse e-mail
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Date de création
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users && users.map((user, index) => (
+                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={index}>
+                                    <td className="px-6 py-4">
+                                        {user.name}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {user.email}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {user.created_at}
+                                    </td>
+                                    <td className="px-6 py-4 flex items-center space-x-2">
+                                        <button className="text-blue-500 hover:text-blue-700" onClick={toggleModal}>
+                                            <Edit className="w-5 h-5" />
+                                        </button>
+                                        <button className="text-red-500 hover:text-red-700">
+                                            <Trash className="w-5 h-5" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </Modal>
-        )}
-      </div>
-    </>
-  );
-};
+            <Modal isOpen={isOpen} toggleModal={toggleModal} />
+        </>
+    );
+}
 
 export default Page;
+
+
