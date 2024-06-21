@@ -1,10 +1,12 @@
 import React from 'react'
+import Header from '../../shared/Header';
 
 const Setting = () => {
   return (
-    <div>
-      Setting
-    </div>
+    <>
+      <Header title='Setting' />
+      <div className="py-6"></div>
+    </>
   )
 }
 

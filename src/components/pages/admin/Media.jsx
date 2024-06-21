@@ -1,10 +1,12 @@
 import React from 'react'
+import Header from '../../shared/Header';
 
 const Media = () => {
   return (
-    <div>
-      Media
-    </div>
+    <>
+      <Header title='Media' />
+      <div className="py-6"></div>
+    </>
   )
 }
 

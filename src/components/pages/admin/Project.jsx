@@ -1,10 +1,12 @@
 import React from 'react'
+import Header from '../../shared/Header';
 
 const Project = () => {
   return (
-    <div>
-      Submenu 1
-    </div>
+    <>
+      <Header title='Submenu 1' />
+      <div className="py-6"></div>
+  </>
   )
 }
 

@@ -69,7 +69,6 @@ const Dashboard = () => {
   return (
     <div className="">
       <Header title='Dashboard' />
-      <main className='min-h-screen'>
         <div className="mx-auto max-w-7xl py-6">
           <div className="grid grid-cols-1 gap-4 px-4 md:grid-cols-4 mt-8 sm:grid-cols-2 sm:px-8">
             <div className="flex items-center bg-white border rounded-sm overflow-hidden shadow">
@@ -111,7 +110,6 @@ const Dashboard = () => {
           </div>
           <OutChart />
         </div>
-      </main>
     </div>
   );
 }

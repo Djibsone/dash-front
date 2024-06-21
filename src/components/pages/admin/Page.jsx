@@ -30,7 +30,7 @@ const Page = () => {
         <>
             <Header title='Page' />
             <div className="mx-auto max-w-7xl py-6">
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-6">
+                <div className="relative shadow-m sm:rounded-lg py-6">
                     <div className="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
                         <p className="inline-flex items-center bg-white font-medium text-sm px-3 py-1.5 border rounded-sm overflow-hidden shadow">
                             Liste des utilisateurs

@@ -1,10 +1,12 @@
 import React from 'react'
+import Header from '../../shared/Header';
 
 const Analytic = () => {
   return (
-    <div className='w-full h-screen scroll-my-3.5'>
-      Analytic
-    </div>
+    <>
+      <Header title='Analytic' />
+      <div className="py-6"></div>
+    </>
   )
 }
 
